@@ -4,9 +4,13 @@
   "description": "A simple Jekyll site full of Japanese Learning Memo from Icer.",
   "main": "gulpfile.js",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "ionic": "jekyll b --config _config.yml --destination ionic/src/assets/site/",
     "dev": "jekyll s --config _config.yml,_config.dev.yml",
     "devi": "jekyll s -i --config _config.yml,_config.dev.yml"
+  },
+   "overrides": {
+	 "graceful-fs": "^4.2.11"
   },
   "keywords": [
     "frontend",

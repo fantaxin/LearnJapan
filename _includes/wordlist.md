@@ -3,16 +3,23 @@
 模式:
 - <a class="toggle-mode" data-column="0|2|3|4|5">普通浏览</a>
 - <a class="toggle-mode" data-column="2|3|5|6">看中文忆日文</a>
+- <audio style="display:none" id="jpAudio" controls></audio>
 </div>
 
 | 假名    | 汉字 | 词性 | 解释 | 单词 | 课 | 序号 |
 | ----    | ---- | ---- | ---- | ---- | -- | --   |
 | loading |      |      |      |      |    |      |
 | ====    | ==== | ==== | ==== | ==== | == | ==   |
-| 假名    | 汉字 | 词性 | 解释 | 单词 | 课 | 序号 |
 {:.display.table.table-striped.table-bordered width="100%"}
 
 <script>
+function speak(lesson, wordIndex) {
+  lesson = lesson.substr(2,2);
+  wordIndex = String(+wordIndex-1).padStart(2, "0");
+  var audio = $("#jpAudio")[0];
+  audio.src = "{{ basepath }}/audio/book01-lesson"+lesson+"-"+wordIndex+".mp3";
+  audio.play();
+};
 $(document).ready(function() {
   function inittable() {
     table.ajax.url('{{ basepath }}/words.json' ).load(function (){
@@ -25,10 +32,16 @@ $(document).ready(function() {
     }, false);
     table.on('xhr.dt', function ( e, settings, json, xhr ) {
       json.data.forEach(function(part, index, arr) {
+        var content = arr[index][1];
+        if(content.length == 0){
+          content = arr[index][0].split("@")[0];
+        }
         arr[index][0]=japanruby(arr[index][0]);
         arr[index][4]=japanruby(arr[index][4]);
-        var content = arr[index][1];
-        arr[index][1] = '<a href="http://kanji.jitenon.jp/cat/search.php?getdata=' + content + '" target="_blank">' + content + '</a>';
+        //arr[index][1] = '<a href="http://kanji.jitenon.jp/cat/search.php?getdata=' + content + '" target="_blank">' + content + '</a>';
+        var lesson = arr[index][5];
+        var wordIndex = arr[index][6];
+        arr[index][1] = '<a onclick="speak(\''+lesson+'\',\''+wordIndex+'\')">' + content + '</a>';
       });
     });
   }
